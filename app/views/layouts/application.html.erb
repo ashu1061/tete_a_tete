@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= yield(:title) %> | Tete a Tete</title>
-    <%= csrf_meta_tags %>
+<head>
+  <title><%= full_title(yield(:title)) %></title>
+  <%= csrf_meta_tags %>
+  <%= stylesheet_link_tag    'application', media: 'all',
+                             'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= render 'layouts/shim' %>
+</head>
+<body>
+<%= render 'layouts/header' %>
+<div class="container">
+  <%= yield %>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-  </head>
+    <%= render 'layouts/footer' %>
 
-  <body>
-    <%= yield %>
-  </body>
+</div>
+</body>
 </html>
