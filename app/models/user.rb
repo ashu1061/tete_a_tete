@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :microposts, dependent: :destroy
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save   :downcase_email
   before_create :create_activation_digest
@@ -8,7 +9,9 @@ class User < ApplicationRecord
             format: { with: VALID_EMAIL_REGEX },
             uniqueness: { case_sensitive: false }
   has_secure_password
+  validate  :profile_pic_size
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
+  mount_uploader :profile_pic, ProfilePicUploader
   def self.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
         BCrypt::Engine.cost
@@ -56,6 +59,10 @@ class User < ApplicationRecord
     UserMailer.password_reset(self).deliver_now
   end
 
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
+
   private
   # Converts email to all lower-case.
   def downcase_email
@@ -67,4 +74,11 @@ class User < ApplicationRecord
     self.activation_token  = User.new_token
     self.activation_digest = User.digest(activation_token)
   end
+
+  def profile_pic_size
+    if profile_pic.size > 1.megabytes
+      errors.add(:profile_pic, "should be less than 1MB")
+    end
+  end
+
 end

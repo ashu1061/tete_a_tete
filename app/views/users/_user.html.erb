@@ -1,4 +1,5 @@
 <li>
+  <%= image_tag user.profile_pic.url if user.profile_pic? %>
   <%= link_to user.name, user %>
   <% if current_user.admin? && !current_user?(user) %>
       | <%= link_to "delete", user, method: :delete,
